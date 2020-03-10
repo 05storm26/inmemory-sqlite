@@ -3,6 +3,12 @@ name = "inmemory-sqlite"
 version = "0.1.0"
 authors = ["A. L. <zlnpgtdtfezf@gmail.com>"]
 edition = "2018"
+license = "MIT"
+description = "Simple Sync + Clone in memory sqlite connection for rusqlite"
+homepage = "https://github.com/zlnpgtdtfezf/inmemory-sqlite"
+documentation = "https://docs.rs/inmemory-sqlite"
+repository = "https://github.com/zlnpgtdtfezf/inmemory-sqlite"
+keywords = ["sql","database","memory","rusqlite"]
 
 [dependencies]
 rusqlite = "0.21"
