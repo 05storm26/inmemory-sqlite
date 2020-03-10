@@ -72,3 +72,11 @@ impl Clone for SyncSqliteConnection {
         self.connection.clear();
     }
 }
+
+mod test {
+
+    #[test]
+    fn testnew() {
+        crate::SyncSqliteConnection::new();
+    }
+}
