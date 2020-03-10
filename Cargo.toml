@@ -1,0 +1,9 @@
+[package]
+name = "inmemory-sqlite"
+version = "0.1.0"
+authors = ["A. L. <zlnpgtdtfezf@gmail.com>"]
+edition = "2018"
+
+[dependencies]
+rusqlite = "0.21"
+thread_local = "1.0"
