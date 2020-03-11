@@ -17,7 +17,7 @@ pub fn open_shared(name: &str) -> Result<Connection> {
 pub fn new_shared() -> Result<Connection> {
     open_shared(&format!(
         "shared_{}",
-        COUNTER.fetch_add(1u64, Ordering::Release)
+        COUNTER.fetch_add(1u64, Ordering::AcqRel)
     ))
 }
 
@@ -28,7 +28,7 @@ pub struct SyncSqliteConnection {
 
 impl SyncSqliteConnection {
     pub fn new() -> Self {
-        let name = format!("shared_{}", COUNTER.fetch_add(1u64, Ordering::Release));
+        let name = format!("shared_{}", COUNTER.fetch_add(1u64, Ordering::AcqRel));
         SyncSqliteConnection {
             connection: ThreadLocal::new(),
             name: name,
