@@ -79,4 +79,35 @@ mod test {
     fn testnew() {
         crate::SyncSqliteConnection::new();
     }
+
+    #[test]
+    fn testnewrealconnection() {
+        let c = crate::SyncSqliteConnection::new();
+
+        c.force();
+    }
+
+    #[test]
+    fn test_open() {
+        let dummy = crate::SyncSqliteConnection::new();
+        dummy.force();
+
+        let c1 = crate::SyncSqliteConnection::new();
+        c1.force();
+
+        let c2 = crate::SyncSqliteConnection::open(c1.name().clone());
+        c2.force();
+
+        assert_eq!(c1.name(), c2.name());
+        assert_ne!(dummy.name(), c1.name());
+    }
+
+    #[test]
+    fn test_clone() {
+        let c1 = crate::SyncSqliteConnection::new();
+        c1.force();
+
+        let c2 = c1.clone();
+        assert_eq!(c1.name(), c2.name());
+    }
 }
