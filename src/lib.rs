@@ -63,8 +63,7 @@ impl SyncSqliteConnection {
     }
 
     pub fn prepare<'conn>(&'conn self, sql: &str) -> Result<SyncStatement<'conn>> {
-        self.try_get()
-            .and_then(|conn| SyncStatement::new(self, sql.to_owned()))
+        SyncStatement::new(self, sql.to_owned())
     }
 }
 
