@@ -13,3 +13,4 @@ keywords = ["sql","database","memory","rusqlite"]
 [dependencies]
 rusqlite = "0.21"
 thread_local = "1.0"
+threadbound = "0.1"
