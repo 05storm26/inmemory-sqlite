@@ -117,7 +117,7 @@ impl<'conn> SyncStatement<'conn> {
         Result::Ok(this)
     }
 
-    fn try_get(&self) -> Result<&Statement<'conn>> {
+    fn try_get(&self) -> Result<&Statement<'_>> {
         self.stmt
             .get_or_try(|| {
                 self.conn
@@ -136,12 +136,12 @@ impl<'conn> SyncStatement<'conn> {
         unsafe {  &mut*(statement as *const _ as *mut Statement) }.execute(params)
     }
 
-    pub fn force(&'conn self) -> &Statement<'conn> {
+    pub fn force(&self) -> &Statement<'_> {
         self.try_get()
             .expect("ERROR: Building the prepared statement has failed!")
     }
 
-    pub fn deref(&'conn self) -> &Statement<'conn> {
+    pub fn deref(&self) -> &Statement<'_> {
         self.force()
     }
 }
