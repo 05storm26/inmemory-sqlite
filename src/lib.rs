@@ -67,11 +67,10 @@ impl SyncSqliteConnection {
         P: IntoIterator,
         P::Item: ToSql,
     {
-        self.try_get()
-            .and_then(|conn| conn.execute(sql, params))
+        self.try_get().and_then(|conn| conn.execute(sql, params))
     }
 
-    pub fn prepare<'conn>(&'conn self, sql: &str) -> Result<SyncStatement<'conn>> {
+    pub fn prepare(&self, sql: &str) -> Result<SyncStatement<'_>> {
         SyncStatement::new(self, sql.to_owned())
     }
 }
@@ -133,7 +132,7 @@ impl<'conn> SyncStatement<'conn> {
         P::Item: ToSql,
     {
         let statement = self.try_get()?;
-        unsafe {  &mut*(statement as *const _ as *mut Statement) }.execute(params)
+        unsafe { &mut *(statement as *const _ as *mut Statement) }.execute(params)
     }
 
     pub fn force(&self) -> &Statement<'_> {
