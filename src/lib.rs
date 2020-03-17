@@ -127,6 +127,15 @@ impl<'conn> SyncStatement<'conn> {
             .map(|ss| &ss.0)
     }
 
+    pub fn execute<P>(&mut self, params: P) -> Result<usize>
+    where
+        P: IntoIterator,
+        P::Item: ToSql,
+    {
+        let statement = self.try_get()?;
+        unsafe {  &mut*(statement as *const _ as *mut Statement) }.execute(params)
+    }
+
     pub fn force(&'conn self) -> &Statement<'conn> {
         self.try_get()
             .expect("ERROR: Building the prepared statement has failed!")
