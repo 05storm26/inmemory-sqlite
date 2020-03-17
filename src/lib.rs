@@ -62,6 +62,15 @@ impl SyncSqliteConnection {
             .expect("ERROR: Creating the connection to the sqlite in memory database has failed!")
     }
 
+    pub fn execute<P>(&self, sql: &str, params: P) -> Result<usize>
+    where
+        P: IntoIterator,
+        P::Item: ToSql,
+    {
+        self.try_get()
+            .and_then(|conn| conn.execute(sql, params))
+    }
+
     pub fn prepare<'conn>(&'conn self, sql: &str) -> Result<SyncStatement<'conn>> {
         SyncStatement::new(self, sql.to_owned())
     }
