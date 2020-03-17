@@ -145,12 +145,12 @@ mod test {
 
     #[test]
     fn testnew() {
-        crate::SyncSqliteConnection::new();
+        let _ignore = crate::SyncSqliteConnection::new();
     }
 
     #[test]
     fn testnewrealconnection() {
-        let c = crate::SyncSqliteConnection::new().unwrap();
+        let _connection = crate::SyncSqliteConnection::new().unwrap();
     }
 
     #[test]
