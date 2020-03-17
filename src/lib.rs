@@ -127,7 +127,7 @@ impl<'conn> SyncStatement<'conn> {
             .map(|ss| &ss.0)
     }
 
-    pub fn execute<P>(&mut self, params: P) -> Result<usize>
+    pub fn execute<P>(&self, params: P) -> Result<usize>
     where
         P: IntoIterator,
         P::Item: ToSql,
