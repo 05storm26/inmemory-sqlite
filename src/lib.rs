@@ -3,6 +3,9 @@ use std::sync::atomic::Ordering;
 
 use std::ops::Deref;
 
+use std::convert;
+use std::result;
+
 use rusqlite::*;
 
 use thread_local::ThreadLocal;
@@ -60,14 +63,6 @@ impl SyncSqliteConnection {
     pub fn force(&self) -> &Connection {
         self.try_get()
             .expect("ERROR: Creating the connection to the sqlite in memory database has failed!")
-    }
-
-    pub fn execute<P>(&self, sql: &str, params: P) -> Result<usize>
-    where
-        P: IntoIterator,
-        P::Item: ToSql,
-    {
-        self.try_get().and_then(|conn| conn.execute(sql, params))
     }
 
     pub fn prepare(&self, sql: &str) -> Result<SyncStatement<'_>> {
@@ -133,6 +128,112 @@ impl<'conn> SyncStatement<'conn> {
     {
         let statement = self.try_get()?;
         unsafe { &mut *(statement as *const _ as *mut Statement) }.execute(params)
+    }
+
+    pub fn execute_named(&mut self, params: &[(&str, &dyn ToSql)]) -> Result<usize> {
+        let statement = self.try_get()?;
+        unsafe { &mut *(statement as *const _ as *mut Statement) }.execute_named(params)
+    }
+
+    pub fn exists<P>(&mut self, params: P) -> Result<bool>
+    where
+        P: IntoIterator,
+        P::Item: ToSql,
+    {
+        let statement = self.try_get()?;
+        unsafe { &mut *(statement as *const _ as *mut Statement) }.exists(params)
+    }
+
+    pub fn insert<P>(&mut self, params: P) -> Result<i64>
+    where
+        P: IntoIterator,
+        P::Item: ToSql,
+    {
+        let statement = self.try_get()?;
+        unsafe { &mut *(statement as *const _ as *mut Statement) }.insert(params)
+    }
+
+    pub fn query<P>(&mut self, params: P) -> Result<Rows<'_>>
+    where
+        P: IntoIterator,
+        P::Item: ToSql,
+    {
+        let statement = self.try_get()?;
+        unsafe { &mut *(statement as *const _ as *mut Statement) }.query(params)
+    }
+
+    pub fn query_named(&mut self, params: &[(&str, &dyn ToSql)]) -> Result<Rows<'_>> {
+        let statement = self.try_get()?;
+        unsafe { &mut *(statement as *const _ as *mut Statement) }.query_named(params)
+    }
+
+    pub fn query_map<T, P, F>(&mut self, params: P, f: F) -> Result<MappedRows<'_, F>>
+    where
+        P: IntoIterator,
+        P::Item: ToSql,
+        F: FnMut(&Row<'_>) -> Result<T>,
+    {
+        let statement = self.try_get()?;
+        unsafe { &mut *(statement as *const _ as *mut Statement) }.query_map(params, f)
+    }
+
+    pub fn query_map_named<T, F>(
+        &mut self,
+        params: &[(&str, &dyn ToSql)],
+        f: F,
+    ) -> Result<MappedRows<'_, F>>
+    where
+        F: FnMut(&Row<'_>) -> Result<T>,
+    {
+        let statement = self.try_get()?;
+        unsafe { &mut *(statement as *const _ as *mut Statement) }.query_map_named(params, f)
+    }
+
+    pub fn query_and_then<T, E, P, F>(&mut self, params: P, f: F) -> Result<AndThenRows<'_, F>>
+    where
+        P: IntoIterator,
+        P::Item: ToSql,
+        E: convert::From<Error>,
+        F: FnMut(&Row<'_>) -> result::Result<T, E>,
+    {
+        let statement = self.try_get()?;
+        unsafe { &mut *(statement as *const _ as *mut Statement) }.query_and_then(params, f)
+    }
+
+    pub fn query_and_then_named<T, E, F>(
+        &mut self,
+        params: &[(&str, &dyn ToSql)],
+        f: F,
+    ) -> Result<AndThenRows<'_, F>>
+    where
+        E: convert::From<Error>,
+        F: FnMut(&Row<'_>) -> result::Result<T, E>,
+    {
+        let statement = self.try_get()?;
+        unsafe { &mut *(statement as *const _ as *mut Statement) }.query_and_then_named(params, f)
+    }
+
+    pub fn query_row<T, P, F>(&mut self, params: P, f: F) -> Result<T>
+    where
+        P: IntoIterator,
+        P::Item: ToSql,
+        F: FnOnce(&Row<'_>) -> Result<T>,
+    {
+        let statement = self.try_get()?;
+        unsafe { &mut *(statement as *const _ as *mut Statement) }.query_row(params, f)
+    }
+
+    pub fn query_row_named<T, F>(&mut self, params: &[(&str, &dyn ToSql)], f: F) -> Result<T>
+    where
+        F: FnOnce(&Row<'_>) -> Result<T>,
+    {
+        let statement = self.try_get()?;
+        unsafe { &mut *(statement as *const _ as *mut Statement) }.query_row_named(params, f)
+    }
+
+    pub fn parameter_index(&self, name: &str) -> Result<Option<usize>> {
+        let statement = self.try_get()?;
+        unsafe { &mut *(statement as *const _ as *mut Statement) }.parameter_index(name)
     }
 
     pub fn force(&self) -> &Statement<'_> {
