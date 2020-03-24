@@ -130,12 +130,12 @@ impl<'conn> SyncStatement<'conn> {
         unsafe { &mut *(statement as *const _ as *mut Statement) }.execute(params)
     }
 
-    pub fn execute_named(&mut self, params: &[(&str, &dyn ToSql)]) -> Result<usize> {
+    pub fn execute_named(&self, params: &[(&str, &dyn ToSql)]) -> Result<usize> {
         let statement = self.try_get()?;
         unsafe { &mut *(statement as *const _ as *mut Statement) }.execute_named(params)
     }
 
-    pub fn exists<P>(&mut self, params: P) -> Result<bool>
+    pub fn exists<P>(&self, params: P) -> Result<bool>
     where
         P: IntoIterator,
         P::Item: ToSql,
@@ -144,7 +144,7 @@ impl<'conn> SyncStatement<'conn> {
         unsafe { &mut *(statement as *const _ as *mut Statement) }.exists(params)
     }
 
-    pub fn insert<P>(&mut self, params: P) -> Result<i64>
+    pub fn insert<P>(&self, params: P) -> Result<i64>
     where
         P: IntoIterator,
         P::Item: ToSql,
@@ -153,7 +153,7 @@ impl<'conn> SyncStatement<'conn> {
         unsafe { &mut *(statement as *const _ as *mut Statement) }.insert(params)
     }
 
-    pub fn query<P>(&mut self, params: P) -> Result<Rows<'_>>
+    pub fn query<P>(&self, params: P) -> Result<Rows<'_>>
     where
         P: IntoIterator,
         P::Item: ToSql,
@@ -162,12 +162,12 @@ impl<'conn> SyncStatement<'conn> {
         unsafe { &mut *(statement as *const _ as *mut Statement) }.query(params)
     }
 
-    pub fn query_named(&mut self, params: &[(&str, &dyn ToSql)]) -> Result<Rows<'_>> {
+    pub fn query_named(&self, params: &[(&str, &dyn ToSql)]) -> Result<Rows<'_>> {
         let statement = self.try_get()?;
         unsafe { &mut *(statement as *const _ as *mut Statement) }.query_named(params)
     }
 
-    pub fn query_map<T, P, F>(&mut self, params: P, f: F) -> Result<MappedRows<'_, F>>
+    pub fn query_map<T, P, F>(&self, params: P, f: F) -> Result<MappedRows<'_, F>>
     where
         P: IntoIterator,
         P::Item: ToSql,
@@ -178,7 +178,7 @@ impl<'conn> SyncStatement<'conn> {
     }
 
     pub fn query_map_named<T, F>(
-        &mut self,
+        &self,
         params: &[(&str, &dyn ToSql)],
         f: F,
     ) -> Result<MappedRows<'_, F>>
@@ -189,7 +189,7 @@ impl<'conn> SyncStatement<'conn> {
         unsafe { &mut *(statement as *const _ as *mut Statement) }.query_map_named(params, f)
     }
 
-    pub fn query_and_then<T, E, P, F>(&mut self, params: P, f: F) -> Result<AndThenRows<'_, F>>
+    pub fn query_and_then<T, E, P, F>(&self, params: P, f: F) -> Result<AndThenRows<'_, F>>
     where
         P: IntoIterator,
         P::Item: ToSql,
@@ -201,7 +201,7 @@ impl<'conn> SyncStatement<'conn> {
     }
 
     pub fn query_and_then_named<T, E, F>(
-        &mut self,
+        &self,
         params: &[(&str, &dyn ToSql)],
         f: F,
     ) -> Result<AndThenRows<'_, F>>
@@ -213,7 +213,7 @@ impl<'conn> SyncStatement<'conn> {
         unsafe { &mut *(statement as *const _ as *mut Statement) }.query_and_then_named(params, f)
     }
 
-    pub fn query_row<T, P, F>(&mut self, params: P, f: F) -> Result<T>
+    pub fn query_row<T, P, F>(&self, params: P, f: F) -> Result<T>
     where
         P: IntoIterator,
         P::Item: ToSql,
@@ -223,7 +223,7 @@ impl<'conn> SyncStatement<'conn> {
         unsafe { &mut *(statement as *const _ as *mut Statement) }.query_row(params, f)
     }
 
-    pub fn query_row_named<T, F>(&mut self, params: &[(&str, &dyn ToSql)], f: F) -> Result<T>
+    pub fn query_row_named<T, F>(&self, params: &[(&str, &dyn ToSql)], f: F) -> Result<T>
     where
         F: FnOnce(&Row<'_>) -> Result<T>,
     {
